@@ -31,6 +31,7 @@ export interface DashboardItemLayout {
 export interface DashboardItemDetail {
   sql: string;
   chartSchema?: Record<string, any>;
+  schemaType?: 'vega-lite' | 'plotly';
 }
 
 export interface DashboardItem {

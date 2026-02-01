@@ -2,7 +2,6 @@ import logging
 import sys
 from typing import Any, Dict
 
-import orjson
 from hamilton import base
 from hamilton.async_driver import AsyncDriver
 from haystack.components.builders.prompt_builder import PromptBuilder
@@ -26,21 +25,21 @@ logger = logging.getLogger("wren-ai-service")
 chart_adjustment_system_prompt = f"""
 ### TASK ###
 
-You are a data analyst great at visualizing data using vega-lite! Given the user's question, SQL, sample data, sample column values, original vega-lite schema and adjustment options, 
-you need to re-generate vega-lite schema in JSON and provide suitable chart type.
-Besides, you need to give a concise and easy-to-understand reasoning to describe why you provide such vega-lite schema based on the question, SQL, sample data, sample column values, original vega-lite schema and adjustment options.
+You are a data analyst great at visualizing data using Plotly! Given the user's question, SQL, sample data, sample column values, original Plotly schema and adjustment options, 
+you need to re-generate Plotly schema in JSON and provide suitable chart type.
+Besides, you need to give a concise and easy-to-understand reasoning to describe why you provide such Plotly schema based on the question, SQL, sample data, sample column values, original Plotly schema and adjustment options.
 
 {chart_generation_instructions}
-- If you think the adjustment options are not suitable for the data, you can return an empty string for the schema and chart type and give reasoning to explain why.
+- If you think the adjustment options are not suitable for the data, you can return an empty object for the schema and empty string for chart type and give reasoning to explain why.
 
 ### OUTPUT FORMAT ###
 
-Please provide your chain of thought reasoning, chart type and the vega-lite schema in JSON format.
+Please provide your chain of thought reasoning, chart type and the Plotly schema in JSON format.
 
 {{
     "reasoning": <REASON_TO_CHOOSE_THE_SCHEMA_IN_STRING_FORMATTED_IN_LANGUAGE_PROVIDED_BY_USER>,
     "chart_type": "line" | "multi_line" | "bar" | "pie" | "grouped_bar" | "stacked_bar" | "area" | "",
-    "chart_schema": <VEGA_LITE_JSON_SCHEMA>
+    "chart_schema": <PLOTLY_JSON_SCHEMA>
 }}
 """
 
@@ -48,7 +47,7 @@ chart_adjustment_user_prompt_template = """
 ### INPUT ###
 Original Question: {{ query }}
 Original SQL: {{ sql }}
-Original Vega-Lite Schema: {{ chart_schema }}
+Original Plotly Schema: {{ chart_schema }}
 Sample Data: {{ sample_data }}
 Sample Column Values: {{ sample_column_values }}
 Language: {{ language }}
@@ -64,13 +63,13 @@ Adjustment Options:
 {% endif %}
 {% endif %}
 {% if adjustment_option.x_offset and adjustment_option.chart_type == "grouped_bar" %}
-- X Offset: {{ adjustment_option.x_offset }}
+- Group By (for grouped bar): {{ adjustment_option.x_offset }}
 {% endif %}
 {% if adjustment_option.color and adjustment_option.chart_type != "area" %}
-- Color: {{ adjustment_option.color }}
+- Color/Series: {{ adjustment_option.color }}
 {% endif %}
 {% if adjustment_option.theta and adjustment_option.chart_type == "pie" %}
-- Theta: {{ adjustment_option.theta }}
+- Values (for pie): {{ adjustment_option.theta }}
 {% endif %}
 
 Please think step by step
@@ -123,13 +122,11 @@ async def generate_chart_adjustment(
 @observe(capture_input=False)
 def post_process(
     generate_chart_adjustment: dict,
-    vega_schema: Dict[str, Any],
     preprocess_data: dict,
     post_processor: ChartGenerationPostProcessor,
 ) -> dict:
     return post_processor.run(
         generate_chart_adjustment.get("replies"),
-        vega_schema,
         preprocess_data["sample_data"],
     )
 
@@ -165,12 +162,8 @@ class ChartAdjustment(BasicPipeline):
             "post_processor": ChartGenerationPostProcessor(),
         }
 
-        with open("src/pipelines/generation/utils/vega-lite-schema-v5.json", "r") as f:
-            _vega_schema = orjson.loads(f.read())
+        self._configs = {}
 
-        self._configs = {
-            "vega_schema": _vega_schema,
-        }
         super().__init__(
             AsyncDriver({}, sys.modules[__name__], result_builder=base.DictResult())
         )

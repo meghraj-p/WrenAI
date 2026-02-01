@@ -26,6 +26,7 @@ export interface CreateDashboardItemInput {
   type: DashboardItemType;
   sql: string;
   chartSchema: DashboardItemDetail['chartSchema'];
+  schemaType?: DashboardItemDetail['schemaType'];
 }
 
 export interface UpdateDashboardItemInput {
@@ -176,6 +177,7 @@ export class DashboardService implements IDashboardService {
       detail: {
         sql: input.sql,
         chartSchema: input.chartSchema,
+        schemaType: input.schemaType,
       },
       layout,
     });

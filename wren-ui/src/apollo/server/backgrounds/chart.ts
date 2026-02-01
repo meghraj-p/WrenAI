@@ -85,6 +85,7 @@ export class ChartBackgroundTracker {
             description: result?.response?.reasoning,
             chartType: result?.response?.chartType?.toUpperCase() || null,
             chartSchema: result?.response?.chartSchema,
+            schemaType: result?.response?.schemaType || 'plotly',
           };
           logger.debug(
             `Job ${threadResponse.id} chart status changed, updating`,
@@ -207,6 +208,7 @@ export class ChartAdjustmentBackgroundTracker {
             description: result?.response?.reasoning,
             chartType: result?.response?.chartType?.toUpperCase() || null,
             chartSchema: result?.response?.chartSchema,
+            schemaType: result?.response?.schemaType || 'plotly',
             adjustment: true,
           };
           logger.debug(

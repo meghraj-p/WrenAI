@@ -249,6 +249,7 @@ export interface ChartResponse {
   reasoning: string;
   chartType: ChartType;
   chartSchema: Record<string, any>;
+  schemaType?: 'vega-lite' | 'plotly';
 }
 
 export interface ChartResult {

@@ -110,6 +110,7 @@ export class DashboardResolver {
       type: itemType,
       sql: response.sql,
       chartSchema: response.chartDetail?.chartSchema,
+      schemaType: response.chartDetail?.schemaType,
     });
   }
 

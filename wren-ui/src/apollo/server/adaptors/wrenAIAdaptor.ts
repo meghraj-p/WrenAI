@@ -756,6 +756,7 @@ export class WrenAIAdaptor implements IWrenAIAdaptor {
         reasoning: body.response?.reasoning,
         chartType: body.response?.chart_type,
         chartSchema: body.response?.chart_schema,
+        schemaType: body.response?.schema_type || 'plotly',
       },
     };
   }

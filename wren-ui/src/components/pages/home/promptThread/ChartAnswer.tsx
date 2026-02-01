@@ -283,6 +283,7 @@ export default function ChartAnswer(props: AnswerResultProps) {
             <Chart
               width={700}
               spec={chartSpec}
+              schemaType={chartDetail?.schemaType}
               values={dataValues}
               onEdit={onEdit}
               onReload={onReload}

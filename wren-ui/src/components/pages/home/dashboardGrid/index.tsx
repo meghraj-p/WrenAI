@@ -379,6 +379,7 @@ const PinnedItem = forwardRef(
                 width="100%"
                 height="100%"
                 spec={detail.chartSchema}
+                schemaType={detail.schemaType}
                 values={previewItem?.data}
                 forceUpdate={forceUpdate}
                 autoFilter

@@ -2,7 +2,6 @@ import logging
 import sys
 from typing import Any, Dict, Optional
 
-import orjson
 from hamilton import base
 from hamilton.async_driver import AsyncDriver
 from haystack.components.builders.prompt_builder import PromptBuilder
@@ -24,20 +23,20 @@ logger = logging.getLogger("wren-ai-service")
 chart_generation_system_prompt = f"""
 ### TASK ###
 
-You are a data analyst great at visualizing data using vega-lite! Given the user's question, SQL, sample data and sample column values, you need to generate vega-lite schema in JSON and provide suitable chart type.
-Besides, you need to give a concise and easy-to-understand reasoning to describe why you provide such vega-lite schema based on the question, SQL, sample data and sample column values.
+You are a data analyst great at visualizing data using Plotly! Given the user's question, SQL, sample data and sample column values, you need to generate a Plotly chart schema in JSON and provide a suitable chart type.
+Besides, you need to give a concise and easy-to-understand reasoning to describe why you provide such Plotly schema based on the question, SQL, sample data and sample column values.
 
 {chart_generation_instructions}
 - If the user provides a custom instruction, it should be followed strictly and you should use it to change the style of response for reasoning.
 
 ### OUTPUT FORMAT ###
 
-Please provide your chain of thought reasoning, chart type and the vega-lite schema in JSON format.
+Please provide your chain of thought reasoning, chart type and the Plotly schema in JSON format.
 
 {{
     "reasoning": <REASON_TO_CHOOSE_THE_SCHEMA_IN_STRING_FORMATTED_IN_LANGUAGE_PROVIDED_BY_USER>,
     "chart_type": "line" | "multi_line" | "bar" | "pie" | "grouped_bar" | "stacked_bar" | "area" | "",
-    "chart_schema": <VEGA_LITE_JSON_SCHEMA>
+    "chart_schema": <PLOTLY_JSON_SCHEMA>
 }}
 """
 
@@ -94,14 +93,12 @@ async def generate_chart(prompt: dict, generator: Any, generator_name: str) -> d
 @observe(capture_input=False)
 def post_process(
     generate_chart: dict,
-    vega_schema: Dict[str, Any],
     remove_data_from_chart_schema: bool,
     preprocess_data: dict,
     post_processor: ChartGenerationPostProcessor,
 ) -> dict:
     return post_processor.run(
         generate_chart.get("replies"),
-        vega_schema,
         preprocess_data["sample_data"],
         remove_data_from_chart_schema,
     )
@@ -138,12 +135,7 @@ class ChartGeneration(BasicPipeline):
             "post_processor": ChartGenerationPostProcessor(),
         }
 
-        with open("src/pipelines/generation/utils/vega-lite-schema-v5.json", "r") as f:
-            _vega_schema = orjson.loads(f.read())
-
-        self._configs = {
-            "vega_schema": _vega_schema,
-        }
+        self._configs = {}
 
         super().__init__(
             AsyncDriver({}, sys.modules[__name__], result_builder=base.DictResult())

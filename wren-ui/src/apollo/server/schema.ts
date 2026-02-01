@@ -785,6 +785,7 @@ export const typeDefs = gql`
     description: String
     chartType: ChartType
     chartSchema: JSON
+    schemaType: String
     adjustment: Boolean
   }
 
@@ -1021,6 +1022,7 @@ export const typeDefs = gql`
   type DashboardItemDetail {
     sql: String!
     chartSchema: JSON
+    schemaType: String
   }
 
   type DashboardItem {

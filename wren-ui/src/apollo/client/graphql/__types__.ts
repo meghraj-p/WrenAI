@@ -277,6 +277,7 @@ export type DashboardItem = {
 export type DashboardItemDetail = {
   __typename?: 'DashboardItemDetail';
   chartSchema?: Maybe<Scalars['JSON']>;
+  schemaType?: Maybe<Scalars['String']>;
   sql: Scalars['String'];
 };
 
@@ -1484,6 +1485,7 @@ export type ThreadResponseChartDetail = {
   description?: Maybe<Scalars['String']>;
   error?: Maybe<Error>;
   queryId?: Maybe<Scalars['String']>;
+  schemaType?: Maybe<Scalars['String']>;
   status: ChartTaskStatus;
 };
 
