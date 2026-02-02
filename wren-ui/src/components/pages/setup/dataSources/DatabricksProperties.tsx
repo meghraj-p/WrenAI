@@ -111,7 +111,7 @@ export default function DatabricksProperties(props: Props) {
               },
             ]}
           >
-            <Input placeholder="Enter your service principal’s Client ID" />
+            <Input placeholder="Enter your service principalâ€™s Client ID" />
           </Form.Item>
           <Form.Item
             label="Client secret"
@@ -124,7 +124,7 @@ export default function DatabricksProperties(props: Props) {
               },
             ]}
           >
-            <Input.Password placeholder="Enter your service principal’s Client Secret" />
+            <Input.Password placeholder="Enter your service principalâ€™s Client Secret" />
           </Form.Item>
           <Form.Item label="Azure tenant ID" name="azureTenantId">
             <Input placeholder="e.g. 72f988bf-86f1-41af-91ab-2d7cd011db47" />

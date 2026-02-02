@@ -3883,6 +3883,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/plotly.js@npm:*":
+  version: 3.0.9
+  resolution: "@types/plotly.js@npm:3.0.9"
+  checksum: 10c0/8f5aa3cc96f6351e978d491356407e69cd417f6fc64df458cb90a5e382515b37e61dff7fe7416ed7d8ad2f3cdbbe1d7c1629d184bcf33e00111c39b3dce0b28e
+  languageName: node
+  linkType: hard
+
 "@types/prop-types@npm:*":
   version: 15.7.11
   resolution: "@types/prop-types@npm:15.7.11"
@@ -3905,6 +3912,16 @@ __metadata:
   dependencies:
     "@types/react": "npm:*"
   checksum: 10c0/abd2a1dda9625c753ff2571a10b69740b2fb9ed1d3141755d54d5814cc12a9701c7c5cd78e8797e945486b441303b82543be71043a32d6a988b57a14237f93c6
+  languageName: node
+  linkType: hard
+
+"@types/react-plotly.js@npm:^2.6.3":
+  version: 2.6.4
+  resolution: "@types/react-plotly.js@npm:2.6.4"
+  dependencies:
+    "@types/plotly.js": "npm:*"
+    "@types/react": "npm:*"
+  checksum: 10c0/e1483e77b2162a7284b186665131a053560a84293c85ade16cd65039383c3894550397cf2b599ce1c870521622f81b176ddbdbe7a10da937b3b88e4aa4b90d4a
   languageName: node
   linkType: hard
 
@@ -12128,6 +12145,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"plotly.js-dist-min@npm:^2.35.0":
+  version: 2.35.3
+  resolution: "plotly.js-dist-min@npm:2.35.3"
+  checksum: 10c0/1c3bc768445f7b6c6ea67b2a5d4a0fc9376619ac52f18faa21c72dfa6a03e82f99af93d42fa0e0e5239cc13fc3f65d8249a3de5527e6ebd95eab1d08dda61719
+  languageName: node
+  linkType: hard
+
 "possible-typed-array-names@npm:^1.0.0":
   version: 1.0.0
   resolution: "possible-typed-array-names@npm:1.0.0"
@@ -13147,6 +13171,18 @@ __metadata:
     "@types/react": ">=18"
     react: ">=18"
   checksum: 10c0/3a3895dbd56647bc864b8da46dd575e71a9e609eb1e43fea8e8e6209d86e208eddd5b07bf8d7b5306a194b405440760a8d134aebd5a4ce5dc7dee4299e84db96
+  languageName: node
+  linkType: hard
+
+"react-plotly.js@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "react-plotly.js@npm:2.6.0"
+  dependencies:
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    plotly.js: ">1.34.0"
+    react: ">0.13.0"
+  checksum: 10c0/9b5ba8e33782daa9624d79295975d08d4c7581bac41d67d497eec0a306e4d030465a1e8282fab145bc02705fe96262f6fb0d214133657c480982fc268763644a
   languageName: node
   linkType: hard
 
@@ -15945,6 +15981,7 @@ __metadata:
     "@types/react": "npm:18.2.0"
     "@types/react-dom": "npm:18.2.0"
     "@types/react-grid-layout": "npm:^1.3.5"
+    "@types/react-plotly.js": "npm:^2.6.3"
     "@types/styled-components": "npm:5.1.26"
     "@typescript-eslint/eslint-plugin": "npm:6.18.0"
     "@typescript-eslint/parser": "npm:6.18.0"
@@ -15978,6 +16015,7 @@ __metadata:
     next-with-less: "npm:^3.0.1"
     pg: "npm:^8.8.0"
     pg-cursor: "npm:^2.7.4"
+    plotly.js-dist-min: "npm:^2.35.0"
     posthog-js: "npm:^1.205.0"
     posthog-node: "npm:^4.3.2"
     prettier: "npm:^3.2.5"
@@ -15986,6 +16024,7 @@ __metadata:
     react-dom: "npm:18.2.0"
     react-grid-layout: "npm:^1.5.0"
     react-markdown: "npm:^9.0.1"
+    react-plotly.js: "npm:^2.6.0"
     reactflow: "npm:11.10.3"
     remark-gfm: "npm:^4.0.0"
     sql-formatter: "npm:^15.3.0"

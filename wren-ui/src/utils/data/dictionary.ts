@@ -61,7 +61,7 @@ export const getExpressionTexts = (type) =>
       name: 'Exponential',
       syntax: 'exp(column)',
       description:
-        'Returns Euler’s number, e, raised to the power of the supplied number.',
+        'Returns Eulerâ€™s number, e, raised to the power of the supplied number.',
     },
     [ExpressionName.FLOOR]: {
       name: 'Floor',

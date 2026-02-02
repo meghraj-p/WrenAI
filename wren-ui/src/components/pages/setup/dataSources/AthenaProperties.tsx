@@ -164,7 +164,7 @@ export default function AthenaProperties(props: Props) {
             The S3 path where Athena stores query results and metadata.
             <br />
             Find this in Athena console under{' '}
-            <b>Settings → Query result location</b>.
+            <b>Settings â†’ Query result location</b>.
           </>
         }
         rules={[

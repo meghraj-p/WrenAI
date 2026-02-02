@@ -536,25 +536,25 @@ export class ModelService implements IModelService {
 
   /** We currently support expression below, right side is the return type of the calculated field.
   Aggregations
-    - **avg(***x***)** → double
-    - **count(***x***)** → bigint
-    - **max(***x***)** → [same as input]
-    - **min(***x***)** → [same as input]
-    - **sum(***x***)** → [same as input]
+    - **avg(***x***)**Â â†’Â double
+    - **count(***x***)**Â â†’Â bigint
+    - **max(***x***)**Â â†’Â [sameÂ asÂ input]
+    - **min(***x***)**Â â†’Â [sameÂ asÂ input]
+    - **sum(***x***)**Â â†’Â [sameÂ asÂ input]
   Math functions
-    - **abs(***x***)** → [same as input]
-    - **cbrt(***x***)** → double
-    - **ceil(***x***)** → [same as input]
-    - **exp(***x***)** → double
-    - **floor(***x***)** → [same as input]
-    - **ln(***x***)** → double
-    - **log10(***x***)** → double
-    - **round(***x***)** → [same as input]
-    - **sign(***x***)** → [same as input]
+    - **abs(***x***)**Â â†’Â [sameÂ asÂ input]
+    - **cbrt(***x***)**Â â†’Â double
+    - **ceil(***x***)**Â â†’Â [sameÂ asÂ input]
+    - **exp(***x***)**Â â†’Â double
+    - **floor(***x***)**Â â†’Â [sameÂ asÂ input]
+    - **ln(***x***)**Â â†’Â double
+    - **log10(***x***)**Â â†’Â double
+    - **round(***x***)**Â â†’Â [sameÂ asÂ input]
+    - **sign(***x***)**Â â†’Â [sameÂ asÂ input]
 
   String functions
-    - **length(***string***)** → bigint
-    - **reverse(**string**)** → varbinary
+    - **length(***string***)**Â â†’Â bigint
+    - **reverse(**string**)**Â â†’Â varbinary
   */
   private async inferCalculatedFieldDataType(
     expression: ExpressionName,

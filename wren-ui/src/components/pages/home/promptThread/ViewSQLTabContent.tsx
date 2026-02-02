@@ -97,7 +97,7 @@ export default function ViewSQLTabContent(props: AnswerResultProps) {
           {hasNativeSQL && (
             <>
               {' '}
-              Click “<b>Show original SQL</b>” to get the executable version.
+              Click â€œ<b>Show original SQL</b>â€ to get the executable version.
             </>
           )}
         </>,
@@ -112,8 +112,8 @@ export default function ViewSQLTabContent(props: AnswerResultProps) {
         className="mb-3 adm-alert-info"
         message={
           <>
-            You’re viewing Wren SQL by default. If you want to run this query on
-            your own database, click “Show original SQL” to get the exact
+            Youâ€™re viewing Wren SQL by default. If you want to run this query
+            on your own database, click â€œShow original SQLâ€ to get the exact
             syntax.
             <Typography.Link
               className="underline ml-1"

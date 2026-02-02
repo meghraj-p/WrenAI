@@ -104,7 +104,7 @@ export default function Chart(props: ChartProps) {
           isShowTopCategories: autoFilter || isShowTopCategories,
           isHideLegend: hideLegend,
           isHideTitle: hideTitle,
-        }
+        },
       );
       const chartSpec = specHandler.getChartSpec();
       const isDataEmpty = isEmpty((chartSpec?.data as any)?.values);
@@ -302,7 +302,7 @@ export default function Chart(props: ChartProps) {
       className={clsx(
         'adm-chart',
         { 'adm-chart--no-actions': hideActions },
-        className
+        className,
       )}
       style={{ width }}
     >

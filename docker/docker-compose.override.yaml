@@ -1,0 +1,12 @@
+services:
+  wren-ai-service:
+    build:
+      context: ../wren-ai-service
+      dockerfile: docker/Dockerfile
+    image: wren-ai-service:local
+
+  wren-ui:
+    build:
+      context: ../wren-ui
+      dockerfile: Dockerfile
+    image: wren-ui:local

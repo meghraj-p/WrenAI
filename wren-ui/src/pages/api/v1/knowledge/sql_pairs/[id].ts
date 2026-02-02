@@ -9,7 +9,7 @@ import {
 } from '@/apollo/server/utils/apiUtils';
 import { getLogger } from '@server/utils';
 
-const logger = getLogger('API_SQL_PAIR_BY_ID');
+const logger = getLogger('API_SQL_PAIRS');
 logger.level = 'debug';
 
 const { projectService, sqlPairService, deployService, queryService } =
@@ -18,109 +18,82 @@ const { projectService, sqlPairService, deployService, queryService } =
 /**
  * SQL Pairs API - Manages SQL query and question pairs for knowledge base
  */
-interface UpdateSqlPairRequest {
-  sql?: string;
-  question?: string;
+interface CreateSqlPairRequest {
+  sql: string;
+  question: string;
 }
 
 /**
- * Validate SQL pair ID from request query
+ * Handle GET request - list all SQL pairs for the current project
  */
-const validateSqlPairId = (id: any): number => {
-  if (!id || typeof id !== 'string') {
-    throw new ApiError('SQL pair ID is required', 400);
-  }
-
-  const sqlPairId = parseInt(id, 10);
-  if (isNaN(sqlPairId)) {
-    throw new ApiError('Invalid SQL pair ID', 400);
-  }
-
-  return sqlPairId;
-};
-
-/**
- * Handle PUT request - update an existing SQL pair
- */
-const handleUpdateSqlPair = async (
+const handleGetSqlPairs = async (
   req: NextApiRequest,
   res: NextApiResponse,
   project: any,
   startTime: number,
 ) => {
-  const { id } = req.query;
-  const sqlPairId = validateSqlPairId(id);
+  // Get all SQL pairs for the current project
+  const sqlPairs = await sqlPairService.getProjectSqlPairs(project.id);
 
-  const { sql, question } = req.body as UpdateSqlPairRequest;
-
-  // Input validation for provided fields
-  if (sql !== undefined) {
-    if (!sql) {
-      throw new ApiError('SQL cannot be empty', 400);
-    }
-    if (sql.length > 10000) {
-      throw new ApiError('SQL is too long (max 10000 characters)', 400);
-    }
-    // Validate SQL syntax and compatibility
-    await validateSql(sql, project, deployService, queryService);
-  }
-
-  if (question !== undefined) {
-    if (!question) {
-      throw new ApiError('Question cannot be empty', 400);
-    }
-    if (question.length > 1000) {
-      throw new ApiError('Question is too long (max 1000 characters)', 400);
-    }
-  }
-
-  // Update the SQL pair
-  const updatedSqlPair = await sqlPairService.editSqlPair(
-    project.id,
-    sqlPairId,
-    {
-      sql,
-      question,
-    },
-  );
-
-  // Return the updated SQL pair directly
+  // Return the SQL pairs array directly
   await respondWithSimple({
     res,
     statusCode: 200,
-    responsePayload: updatedSqlPair,
+    responsePayload: sqlPairs,
     projectId: project.id,
-    apiType: ApiType.UPDATE_SQL_PAIR,
+    apiType: ApiType.GET_SQL_PAIRS,
     startTime,
-    requestPayload: req.body,
+    requestPayload: {},
     headers: req.headers as Record<string, string>,
   });
 };
 
 /**
- * Handle DELETE request - delete a SQL pair
+ * Handle POST request - create a new SQL pair
  */
-const handleDeleteSqlPair = async (
+const handleCreateSqlPair = async (
   req: NextApiRequest,
   res: NextApiResponse,
   project: any,
   startTime: number,
 ) => {
-  const { id } = req.query;
-  const sqlPairId = validateSqlPairId(id);
+  const { sql, question } = req.body as CreateSqlPairRequest;
 
-  // Delete the SQL pair
-  await sqlPairService.deleteSqlPair(project.id, sqlPairId);
+  // Input validation
+  if (!sql) {
+    throw new ApiError('SQL is required', 400);
+  }
 
-  // Return 204 No Content with no payload
+  if (!question) {
+    throw new ApiError('Question is required', 400);
+  }
+
+  if (sql.length > 10000) {
+    throw new ApiError('SQL is too long (max 10000 characters)', 400);
+  }
+
+  if (question.length > 1000) {
+    throw new ApiError('Question is too long (max 1000 characters)', 400);
+  }
+
+  // Validate SQL syntax and compatibility
+  await validateSql(sql, project, deployService, queryService);
+
+  // Create the SQL pair
+  const newSqlPair = await sqlPairService.createSqlPair(project.id, {
+    sql,
+    question,
+  });
+
+  // Return the created SQL pair directly
   await respondWithSimple({
     res,
-    statusCode: 204,
-    responsePayload: {},
+    statusCode: 201,
+    responsePayload: newSqlPair,
     projectId: project.id,
-    apiType: ApiType.DELETE_SQL_PAIR,
+    apiType: ApiType.CREATE_SQL_PAIR,
     startTime,
-    requestPayload: { id: sqlPairId },
+    requestPayload: req.body,
     headers: req.headers as Record<string, string>,
   });
 };
@@ -135,15 +108,15 @@ export default async function handler(
   try {
     project = await projectService.getCurrentProject();
 
-    // Handle PUT method - update SQL pair
-    if (req.method === 'PUT') {
-      await handleUpdateSqlPair(req, res, project, startTime);
+    // Handle GET method - list SQL pairs
+    if (req.method === 'GET') {
+      await handleGetSqlPairs(req, res, project, startTime);
       return;
     }
 
-    // Handle DELETE method - delete SQL pair
-    if (req.method === 'DELETE') {
-      await handleDeleteSqlPair(req, res, project, startTime);
+    // Handle POST method - create SQL pair
+    if (req.method === 'POST') {
+      await handleCreateSqlPair(req, res, project, startTime);
       return;
     }
 
@@ -155,10 +128,8 @@ export default async function handler(
       res,
       projectId: project?.id,
       apiType:
-        req.method === 'PUT'
-          ? ApiType.UPDATE_SQL_PAIR
-          : ApiType.DELETE_SQL_PAIR,
-      requestPayload: req.method === 'PUT' ? req.body : { id: req.query.id },
+        req.method === 'GET' ? ApiType.GET_SQL_PAIRS : ApiType.CREATE_SQL_PAIR,
+      requestPayload: req.method === 'GET' ? {} : req.body,
       headers: req.headers as Record<string, string>,
       startTime,
       logger,

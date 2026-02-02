@@ -1,4 +1,4 @@
-import { cloneDeep, isNil, sortBy, uniq, isNumber } from 'lodash';
+import { cloneDeep, isNil, sortBy, uniq } from 'lodash';
 import type { Data, Layout, Config } from 'plotly.js';
 
 // Color scheme matching the Vega theme
@@ -59,7 +59,7 @@ export default class PlotlySpecHandler {
   constructor(
     spec: PlotlySpec,
     values: Record<string, any>[],
-    options?: PlotlyChartOptions
+    options?: PlotlyChartOptions,
   ) {
     this.values = values || [];
 
@@ -166,10 +166,10 @@ export default class PlotlySpecHandler {
 
           if (labelField && valueField) {
             (updatedTrace as any).labels = this.values.map(
-              (v) => v[labelField]
+              (v) => v[labelField],
             );
             (updatedTrace as any).values = this.values.map(
-              (v) => v[valueField]
+              (v) => v[valueField],
             );
           }
         }
@@ -196,8 +196,10 @@ export default class PlotlySpecHandler {
     const labels = (trace as any).labels;
     const values = (trace as any).values;
     return (
-      (typeof labels === 'string' || (Array.isArray(labels) && labels.length === 0)) &&
-      (typeof values === 'string' || (Array.isArray(values) && values.length === 0))
+      (typeof labels === 'string' ||
+        (Array.isArray(labels) && labels.length === 0)) &&
+      (typeof values === 'string' ||
+        (Array.isArray(values) && values.length === 0))
     );
   }
 
@@ -227,7 +229,10 @@ export default class PlotlySpecHandler {
 
         if (labels && values && labels.length > limit) {
           // Sort by values descending and take top N
-          const paired = labels.map((label, i) => ({ label, value: values[i] }));
+          const paired = labels.map((label, i) => ({
+            label,
+            value: values[i],
+          }));
           const sorted = sortBy(paired, (p) => -p.value).slice(0, limit);
 
           return {
@@ -288,7 +293,7 @@ export default class PlotlySpecHandler {
     }
 
     // Apply default color to single traces without colors
-    this.data = this.data.map((trace, index) => {
+    this.data = this.data.map((trace, _index) => {
       if (trace.type === 'bar' || trace.type === 'scatter') {
         if (!(trace as any).marker?.color && this.data.length === 1) {
           return {
@@ -318,7 +323,11 @@ export default class PlotlySpecHandler {
     });
   }
 
-  public getChartSpec(): { data: Data[]; layout: Partial<Layout>; config: Partial<Config> } | null {
+  public getChartSpec(): {
+    data: Data[];
+    layout: Partial<Layout>;
+    config: Partial<Config>;
+  } | null {
     // Check if we have too many categories
     const categories = this.getAllCategories();
     if (categories.length > (this.options.categoriesLimit || 25)) {

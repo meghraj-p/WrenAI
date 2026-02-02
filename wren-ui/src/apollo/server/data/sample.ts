@@ -296,7 +296,7 @@ export const sampleDatasets: Record<string, SampleDataset> = {
             name: 'from_date',
             properties: {
               description:
-                'The start date of the employee’s managerial role in the department.',
+                'The start date of the employeeâ€™s managerial role in the department.',
               displayName: 'from_date',
             },
           },
@@ -304,7 +304,7 @@ export const sampleDatasets: Record<string, SampleDataset> = {
             name: 'to_date',
             properties: {
               description:
-                'The end date of the employee’s managerial role in the department.',
+                'The end date of the employeeâ€™s managerial role in the department.',
               displayName: 'to_date',
             },
           },
@@ -1481,7 +1481,7 @@ export const sampleDatasets: Record<string, SampleDataset> = {
         ],
         properties: {
           description:
-            'This table describes the game statistics for both the home and away teams in each NBA game. Turnover percentage is the number of possessions that end in a turnover. The formula for turnover percentage (TOV%) is "TOV% = (Tov ÷ (FGA + (0.44 x FTA) + Tov)) x 100%".',
+            'This table describes the game statistics for both the home and away teams in each NBA game. Turnover percentage is the number of possessions that end in a turnover. The formula for turnover percentage (TOV%) is "TOV% = (Tov Ã· (FGA + (0.44 x FTA) + Tov)) x 100%".',
         },
       },
       {
@@ -1735,7 +1735,7 @@ export const sampleDatasets: Record<string, SampleDataset> = {
         ],
         properties: {
           description:
-            'This table describes the game statistics for each NBA player in every game. Turnover percentage is the number of possessions that end in a turnover. The formula for turnover percentage (TOV%) is "TOV% = (Tov ÷ (FGA + (0.44 x FTA) + Tov)) x 100%".',
+            'This table describes the game statistics for each NBA player in every game. Turnover percentage is the number of possessions that end in a turnover. The formula for turnover percentage (TOV%) is "TOV% = (Tov Ã· (FGA + (0.44 x FTA) + Tov)) x 100%".',
         },
       },
       {

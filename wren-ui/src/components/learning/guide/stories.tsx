@@ -233,8 +233,8 @@ const playDataModelingGuide = (
         ),
         description: renderToString(
           <>
-            When you finish editing your models, you can visit “Home” and start
-            asking questions.
+            When you finish editing your models, you can visit â€œHomeâ€ and
+            start asking questions.
           </>,
         ),
         onPopoverRender: (popoverDom: DriverPopoverDOM) => {
@@ -397,8 +397,8 @@ const playKnowledgeGuide = (
         ),
         description: renderToString(
           <>
-            Create and manage <b>Question-SQL pairs</b> to refine Wren AI’s SQL
-            generation. You can manually add pairs here or go to Home, ask a
+            Create and manage <b>Question-SQL pairs</b> to refine Wren AIâ€™s
+            SQL generation. You can manually add pairs here or go to Home, ask a
             question, and save the correct answer to Knowledge. The more you
             save, the smarter Wren AI becomes!
           </>,

@@ -7,8 +7,9 @@ import {
   handleApiError,
 } from '@/apollo/server/utils/apiUtils';
 import { getLogger } from '@server/utils';
+import { isNil } from 'lodash';
 
-const logger = getLogger('API_INSTRUCTION_BY_ID');
+const logger = getLogger('API_INSTRUCTIONS');
 logger.level = 'debug';
 
 const { projectService, instructionService } = components;
@@ -26,118 +27,140 @@ const { projectService, instructionService } = components;
  *    - Ideal for guiding how Wren AI handles specific business concepts
  *    - MUST include questions array with at least one question
  */
-interface UpdateInstructionRequest {
-  instruction?: string;
+interface CreateInstructionRequest {
+  instruction: string;
   questions?: string[];
   isGlobal?: boolean;
 }
 
 /**
- * Validate instruction ID from request query
+ * Handle GET request - list all instructions for the current project
  */
-const validateInstructionId = (id: any): number => {
-  if (!id || typeof id !== 'string') {
-    throw new ApiError('Instruction ID is required', 400);
-  }
-
-  const instructionId = parseInt(id, 10);
-  if (isNaN(instructionId)) {
-    throw new ApiError('Invalid instruction ID', 400);
-  }
-
-  return instructionId;
-};
-
-/**
- * Handle PUT request - update an existing instruction
- */
-const handleUpdateInstruction = async (
+const handleGetInstructions = async (
   req: NextApiRequest,
   res: NextApiResponse,
   project: any,
   startTime: number,
 ) => {
-  const { id } = req.query;
-  const instructionId = validateInstructionId(id);
-
-  const { instruction, questions, isGlobal } =
-    req.body as UpdateInstructionRequest;
-
-  // Get the original instruction
-  const existingInstruction =
-    await instructionService.getInstruction(instructionId);
-
-  if (!existingInstruction) {
-    throw new ApiError('Instruction not found', 404);
-  }
-
-  // Merge original with update payload
-  const mergedInstruction = {
-    instruction: instruction ?? existingInstruction.instruction,
-    questions: questions ?? existingInstruction.questions,
-    isGlobal: isGlobal ?? existingInstruction.isDefault,
-  };
-
-  // If isGlobal is true, set questions to empty array
-  if (mergedInstruction.isGlobal === true) {
-    mergedInstruction.questions = [];
-  }
-
-  // Update the instruction
-  const updatedInstruction = await instructionService.updateInstruction({
-    id: instructionId,
-    instruction: mergedInstruction.instruction,
-    questions: mergedInstruction.questions,
-    isDefault: mergedInstruction.isGlobal,
-    projectId: project.id,
+  // Get all instructions for the current project
+  const instructions = (
+    (await instructionService.getInstructions(project.id)) || []
+  ).map((instruction) => {
+    const isGlobalValue =
+      typeof instruction.isDefault === 'boolean'
+        ? instruction.isDefault
+        : Boolean(instruction.isDefault);
+    return {
+      id: instruction.id,
+      instruction: instruction.instruction,
+      questions: instruction.questions,
+      isGlobal: isGlobalValue,
+    };
   });
 
-  // Return the updated instruction directly
-  const isGlobalValue =
-    typeof updatedInstruction.isDefault === 'boolean'
-      ? updatedInstruction.isDefault
-      : Boolean(updatedInstruction.isDefault);
+  // Return the instructions array directly
   await respondWithSimple({
     res,
     statusCode: 200,
-    responsePayload: {
-      id: updatedInstruction.id,
-      instruction: updatedInstruction.instruction,
-      questions: updatedInstruction.questions,
-      isGlobal: isGlobalValue,
-    },
+    responsePayload: instructions,
     projectId: project.id,
-    apiType: ApiType.UPDATE_INSTRUCTION,
+    apiType: ApiType.GET_INSTRUCTIONS,
     startTime,
-    requestPayload: req.body,
+    requestPayload: {},
     headers: req.headers as Record<string, string>,
   });
 };
 
 /**
- * Handle DELETE request - delete an instruction
+ * Handle POST request - create a new instruction
  */
-const handleDeleteInstruction = async (
+const handleCreateInstruction = async (
   req: NextApiRequest,
   res: NextApiResponse,
   project: any,
   startTime: number,
 ) => {
-  const { id } = req.query;
-  const instructionId = validateInstructionId(id);
+  const { instruction, questions, isGlobal } =
+    req.body as CreateInstructionRequest;
 
-  // Delete the instruction
-  await instructionService.deleteInstruction(instructionId, project.id);
+  // Input validation
+  if (!instruction) {
+    throw new ApiError('Instruction is required', 400);
+  }
 
-  // Return 204 No Content with no payload
+  if (instruction.length > 1000) {
+    throw new ApiError('Instruction is too long (max 1000 characters)', 400);
+  }
+
+  if (isNil(isGlobal) && isNil(questions)) {
+    throw new ApiError('isGlobal or questions is required', 400);
+  }
+
+  // Validate instruction type and fields
+  if (isGlobal === true) {
+    // Global instruction - questions should not be provided
+    if (questions && questions.length > 0) {
+      throw new ApiError(
+        'Global instructions should not include questions. Questions are only for question-matching instructions.',
+        400,
+      );
+    }
+  } else {
+    // Question-matching instruction - questions are required
+    if (!questions || !Array.isArray(questions) || questions.length === 0) {
+      throw new ApiError(
+        'Question-matching instructions require at least one question',
+        400,
+      );
+    }
+
+    // Validate each question
+    questions.forEach((question, index) => {
+      if (
+        !question ||
+        typeof question !== 'string' ||
+        question.trim().length === 0
+      ) {
+        throw new ApiError(
+          `Question at index ${index} is required and cannot be empty`,
+          400,
+        );
+      }
+      if (question.length > 500) {
+        throw new ApiError(
+          `Question at index ${index} is too long (max 500 characters)`,
+          400,
+        );
+      }
+    });
+  }
+
+  // Create the instruction
+  const newInstruction = await instructionService.createInstruction({
+    instruction,
+    questions: questions || [],
+    isDefault: isGlobal === true,
+    projectId: project.id,
+  });
+
+  // Return the created instruction directly
+  const isGlobalValue =
+    typeof newInstruction.isDefault === 'boolean'
+      ? newInstruction.isDefault
+      : Boolean(newInstruction.isDefault);
   await respondWithSimple({
     res,
-    statusCode: 204,
-    responsePayload: {},
+    statusCode: 201,
+    responsePayload: {
+      id: newInstruction.id,
+      instruction: newInstruction.instruction,
+      questions: newInstruction.questions,
+      isGlobal: isGlobalValue,
+    },
     projectId: project.id,
-    apiType: ApiType.DELETE_INSTRUCTION,
+    apiType: ApiType.CREATE_INSTRUCTION,
     startTime,
-    requestPayload: { id: instructionId },
+    requestPayload: req.body,
     headers: req.headers as Record<string, string>,
   });
 };
@@ -152,15 +175,15 @@ export default async function handler(
   try {
     project = await projectService.getCurrentProject();
 
-    // Handle PUT method - update instruction
-    if (req.method === 'PUT') {
-      await handleUpdateInstruction(req, res, project, startTime);
+    // Handle GET method - list instructions
+    if (req.method === 'GET') {
+      await handleGetInstructions(req, res, project, startTime);
       return;
     }
 
-    // Handle DELETE method - delete instruction
-    if (req.method === 'DELETE') {
-      await handleDeleteInstruction(req, res, project, startTime);
+    // Handle POST method - create instruction
+    if (req.method === 'POST') {
+      await handleCreateInstruction(req, res, project, startTime);
       return;
     }
 
@@ -172,10 +195,10 @@ export default async function handler(
       res,
       projectId: project?.id,
       apiType:
-        req.method === 'PUT'
-          ? ApiType.UPDATE_INSTRUCTION
-          : ApiType.DELETE_INSTRUCTION,
-      requestPayload: req.method === 'PUT' ? req.body : { id: req.query.id },
+        req.method === 'GET'
+          ? ApiType.GET_INSTRUCTIONS
+          : ApiType.CREATE_INSTRUCTION,
+      requestPayload: req.method === 'GET' ? {} : req.body,
       headers: req.headers as Record<string, string>,
       startTime,
       logger,

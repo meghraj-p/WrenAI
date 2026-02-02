@@ -101,7 +101,7 @@ const dataSource = {
         s3_staging_dir: s3StagingDir,
         schema_name: schema,
       };
-      // If OIDC fields are provided → send OIDC config
+      // If OIDC fields are provided â†’ send OIDC config
       if (webIdentityToken && roleArn) {
         return {
           ...base,
@@ -110,7 +110,7 @@ const dataSource = {
           ...(roleSessionName && { role_session_name: roleSessionName }),
         } satisfies IbisAthenaConnectionInfo;
       }
-      // Otherwise → fallback to AWS access key authentication
+      // Otherwise â†’ fallback to AWS access key authentication
       return {
         ...base,
         aws_access_key_id: awsAccessKey,
