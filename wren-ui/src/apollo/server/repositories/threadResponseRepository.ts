@@ -36,7 +36,7 @@ export interface ThreadResponseChartDetail {
   description?: string;
   chartType?: string;
   chartSchema?: Record<string, any>;
-  schemaType?: 'vega-lite' | 'plotly';
+  schemaType?: 'plotly';
   adjustment?: boolean;
 }
 

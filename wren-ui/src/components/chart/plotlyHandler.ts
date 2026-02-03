@@ -1,7 +1,7 @@
 import { cloneDeep, isNil, sortBy, uniq } from 'lodash';
 import type { Data, Layout, Config } from 'plotly.js';
 
-// Color scheme matching the Vega theme
+// Default color scheme
 const colorScheme = [
   '#7763CF',
   '#444CE7',
@@ -362,28 +362,3 @@ export default class PlotlySpecHandler {
   }
 }
 
-/**
- * Detect if a chart schema is Plotly or Vega-Lite format
- */
-export function detectSchemaType(schema: any): 'plotly' | 'vega-lite' {
-  if (!schema || typeof schema !== 'object') {
-    return 'vega-lite';
-  }
-
-  // Plotly schemas have 'data' array with traces
-  if (Array.isArray(schema.data) && schema.data.length > 0) {
-    const firstTrace = schema.data[0];
-    // Plotly traces have 'type' like 'bar', 'scatter', 'pie'
-    if (firstTrace && typeof firstTrace.type === 'string') {
-      return 'plotly';
-    }
-  }
-
-  // Vega-Lite schemas have 'mark' and 'encoding'
-  if (schema.mark || schema.encoding || schema.$schema?.includes('vega')) {
-    return 'vega-lite';
-  }
-
-  // Default to vega-lite for backward compatibility
-  return 'vega-lite';
-}

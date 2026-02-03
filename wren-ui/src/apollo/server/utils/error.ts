@@ -54,8 +54,8 @@ export enum GeneralErrorCodes {
   NON_SQL_QUERY = 'NON_SQL_QUERY',
   NO_DEPLOYMENT_FOUND = 'NO_DEPLOYMENT_FOUND',
 
-  // vega schema error
-  FAILED_TO_GENERATE_VEGA_SCHEMA = 'FAILED_TO_GENERATE_VEGA_SCHEMA',
+  // chart generation error
+  FAILED_TO_GENERATE_CHART = 'FAILED_TO_GENERATE_CHART',
   POLLING_TIMEOUT = 'POLLING_TIMEOUT',
 
   // sql execution error
@@ -121,9 +121,8 @@ export const errorMessages = {
   [GeneralErrorCodes.NO_DEPLOYMENT_FOUND]:
     'No deployment found, please deploy your project first',
 
-  // vega schema error
-  [GeneralErrorCodes.FAILED_TO_GENERATE_VEGA_SCHEMA]:
-    'Failed to generate Vega spec',
+  // chart generation error
+  [GeneralErrorCodes.FAILED_TO_GENERATE_CHART]: 'Failed to generate chart',
   [GeneralErrorCodes.POLLING_TIMEOUT]: 'Polling timeout',
 
   // sql execution error
@@ -157,8 +156,7 @@ export const shortMessages = {
   [GeneralErrorCodes.NON_SQL_QUERY]: 'Cannot generate SQL from this question.',
   [GeneralErrorCodes.NO_DEPLOYMENT_FOUND]:
     'No deployment found, please deploy your project first',
-  [GeneralErrorCodes.FAILED_TO_GENERATE_VEGA_SCHEMA]:
-    'Failed to generate Vega spec',
+  [GeneralErrorCodes.FAILED_TO_GENERATE_CHART]: 'Failed to generate chart',
   [GeneralErrorCodes.POLLING_TIMEOUT]: 'Polling timeout',
   [GeneralErrorCodes.SQL_EXECUTION_ERROR]: 'SQL execution error',
 };

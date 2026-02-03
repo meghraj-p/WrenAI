@@ -35,15 +35,12 @@ const sanitizeResponsePayload = (payload: any, apiType?: ApiType): any => {
     }
   }
 
-  // Handle specifically GENERATE_VEGA_CHART responses that contain large data values
-  if (apiType === ApiType.GENERATE_VEGA_CHART) {
-    // Remove vegaSpec.data.values array but keep the structure
-    if (
-      sanitized.vegaSpec?.data?.values &&
-      Array.isArray(sanitized.vegaSpec.data.values)
-    ) {
-      const dataCount = sanitized.vegaSpec.data.values.length;
-      sanitized.vegaSpec.data.values = [`${dataCount} data points omitted`];
+  // Handle specifically GENERATE_CHART responses that contain large data values
+  if (apiType === ApiType.GENERATE_CHART) {
+    // Remove chartSpec.data array but keep the structure
+    if (sanitized.data && Array.isArray(sanitized.data)) {
+      const dataCount = sanitized.data.length;
+      sanitized.data = [`${dataCount} data points omitted`];
     }
   }
 

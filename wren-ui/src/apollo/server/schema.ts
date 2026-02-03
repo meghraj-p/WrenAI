@@ -7,7 +7,7 @@ export const typeDefs = gql`
   enum ApiType {
     GENERATE_SQL
     RUN_SQL
-    GENERATE_VEGA_CHART
+    GENERATE_CHART
     GENERATE_SUMMARY
     ASK
     GET_INSTRUCTIONS
